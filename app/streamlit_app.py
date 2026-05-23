@@ -173,7 +173,26 @@ df[["Anomaly_Flag", "Anomaly_Reason"]] = df.apply(
     axis=1
 )
 
+# Initialize chat history
 
+if "chat_history" not in st.session_state:
+
+    st.session_state.chat_history = []
+
+# Display previous chat history
+
+if st.session_state.chat_history:
+
+    st.subheader("Conversation History")
+
+    for chat in reversed(st.session_state.chat_history):
+
+        st.markdown(f"**You:** {chat['question']}")
+
+        st.markdown(f"**Copilot:** {chat['answer']}")
+
+        st.markdown("---")
+        
 # Create question input box
 
 question = st.text_input(
@@ -216,7 +235,15 @@ if st.button("Ask Copilot"):
             st.write(
                 result.get("ai_answer")
             )
+           
+            # Save conversation history
 
+            st.session_state.chat_history.append({
+
+            "question": question,
+
+            "answer": result.get("ai_answer")
+            })
 
             # Detect chart intent
 

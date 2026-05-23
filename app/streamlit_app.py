@@ -4,6 +4,25 @@ import streamlit as st
 import pandas as pd
 import sys
 import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+# Add src folder to Python path
+current_dir = os.path.dirname(__file__)
+
+src_path = os.path.abspath(
+    os.path.join(current_dir, "../src")
+)
+
+sys.path.insert(0, src_path)
+
+# Import project engines
+from kpi_engine import kpi_rules
+from anomaly_engine import detect_anomaly
+from summary_engine import create_dynamic_summary, extract_top_bottom_n
+from ai_engine import ask_warehouse_copilot
+from chart_engine import detect_chart_intent, create_chart_data, create_dynamic_chart
+
 
 # Load environment variables
 
@@ -12,26 +31,6 @@ from dotenv import load_dotenv
 # OpenAI client
 
 from openai import OpenAI
-
-
-# Import project engines
-
-from src.kpi_engine import kpi_rules
-
-from src.anomaly_engine import detect_anomaly
-
-from src.summary_engine import (
-    create_dynamic_summary,
-    extract_top_bottom_n
-)
-
-from src.ai_engine import ask_warehouse_copilot
-
-from src.chart_engine import (
-    detect_chart_intent,
-    create_chart_data,
-    create_dynamic_chart
-)
 
 
 # Configure Streamlit page

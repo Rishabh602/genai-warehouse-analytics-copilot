@@ -98,19 +98,72 @@ st.markdown(
     """
 )
 
+# Demo guidance section
+
+with st.expander("Understanding The Demo Questions & KPIs"):
+
+    st.markdown(
+        """
+        ### Warehouse Structure
+
+        - **Distribution Center (DC)** → Warehouse or fulfillment center location
+        - **DC_Manager** → Manager responsible for warehouse operations
+        - **Team Leader** → Supervises warehouse operational teams
+        - **Shift** → Work shift (Morning / Evening / Night)
+        - **Employee_ID** → Individual warehouse employee identifier
+
+        ### KPI Definitions
+
+        - **PickRate** → Measures picking productivity and operational speed
+        - **SelectionRate_Cases** → Number of warehouse cases selected
+        - **ReplenishmentRate** → Inventory replenishment productivity
+        - **Overtime_pct** → Percentage of overtime worked
+        - **IdleSelectionTime_pct** → Percentage of non-productive idle time
+        - **OnTaskTime_pct** → Percentage of productive operational time
+
+        ### Understanding Demo Questions
+
+        - **Top/Bottom Questions**
+            → Compare highest or lowest KPI performers
+
+        Example:
+        - "Top 2 DC_Manager by PickRate"
+
+        - **Trend Questions**
+            → Analyze KPI performance over time
+
+        Example:
+        - "Show overtime trend across shifts"
+
+        - **Anomaly Questions**
+            → Identify unusual operational KPI behavior
+
+        Example:
+        - "Which team leader has the most anomalies?"
+
+        ### What Is Anomaly Detection?
+
+        The system flags KPI records as anomalies when KPI values fall outside
+        predefined operational thresholds.
+
+        Example:
+        - unusually low PickRate
+        - high overtime
+        - excessive idle time
+        """
+    )
 
 # Basic access control
 
-APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
-
-password = st.text_input(
-    "Enter access password:",
-    type="password"
-)
-
-if password != APP_PASSWORD:
-    st.warning("Please enter the correct password to access the copilot.")
-    st.stop()
+#APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
+#
+#password = st.text_input(
+#    "Enter access password:",
+#    type="password"
+#
+#if password != APP_PASSWORD:
+#    st.warning("Please enter the correct password to access the copilot.")
+#    st.stop()
 
 
 # Load API key
@@ -173,7 +226,7 @@ if "selected_question" not in st.session_state:
 if st.session_state.chat_history:
     st.subheader("Conversation History")
 
-    for chat in reversed(st.session_state.chat_history):
+    for chat in st.session_state.chat_history:
         st.markdown(f"**You:** {chat['question']}")
         st.markdown(f"**Copilot:** {chat['answer']}")
         st.markdown("---")

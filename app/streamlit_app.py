@@ -111,6 +111,20 @@ st.markdown(
     """
 )
 
+# Basic access control
+
+APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
+
+password = st.text_input(
+    "Enter access password:",
+    type="password"
+)
+
+if password != APP_PASSWORD:
+
+    st.warning("Please enter the correct password to access the copilot.")
+
+    st.stop()
 
 # Load API key
 

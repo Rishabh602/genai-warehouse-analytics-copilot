@@ -126,9 +126,22 @@ client = OpenAI(api_key=api_key)
 
 # Load warehouse KPI dataset
 
-df = pd.read_excel(
-    "../datasets/Step 1. synthetic_warehouse_kpi_data.xlsx"
+# Build dataset file path
+
+dataset_path = os.path.abspath(
+    os.path.join(
+        current_dir,
+        "../datasets/Step 1. synthetic_warehouse_kpi_data.xlsx"
+    )
 )
+
+# Load warehouse KPI dataset
+
+df = pd.read_excel(dataset_path)
+
+# Load warehouse KPI dataset
+
+df = pd.read_excel(dataset_path)
 
 # Apply anomaly detection
 

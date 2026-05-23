@@ -108,7 +108,30 @@ def create_chart_data(
             detected_kpi = kpi
             break
 
+        # Fallback KPI detection for natural language terms
+
+    if detected_kpi is None:
+
+        if "pickrate" in question_lower or "pick rate" in question_lower:
+            detected_kpi = "PickRate"
+
+        elif "selection" in question_lower:
+            detected_kpi = "SelectionRate_Cases"
+
+        elif "replenishment" in question_lower:
+            detected_kpi = "ReplenishmentRate"
+
+        elif "idle" in question_lower:
+            detected_kpi = "IdleSelectionTime_pct"
+
+        elif "ontask" in question_lower or "on task" in question_lower:
+            detected_kpi = "OnTaskTime_pct"
+
+        elif "overtime" in question_lower:
+            detected_kpi = "Overtime_pct"
+            
     chart_intent["detected_kpi"] = detected_kpi
+
 
     time_based = chart_intent["time_based"]
 

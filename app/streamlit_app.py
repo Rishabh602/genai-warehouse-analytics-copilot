@@ -7,7 +7,9 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 
+
 # Add src folder to Python path
+
 current_dir = os.path.dirname(__file__)
 
 src_path = os.path.abspath(
@@ -16,21 +18,14 @@ src_path = os.path.abspath(
 
 sys.path.insert(0, src_path)
 
+
 # Import project engines
+
 from kpi_engine import kpi_rules
 from anomaly_engine import detect_anomaly
 from summary_engine import create_dynamic_summary, extract_top_bottom_n
 from ai_engine import ask_warehouse_copilot
 from chart_engine import detect_chart_intent, create_chart_data, create_dynamic_chart
-
-
-# Load environment variables
-
-from dotenv import load_dotenv
-
-# OpenAI client
-
-from openai import OpenAI
 
 
 # Configure Streamlit page
@@ -45,18 +40,10 @@ st.set_page_config(
 
 col1, col2 = st.columns([5, 1])
 
-
-# Left side title
-
 with col1:
-
     st.title("GenAI Warehouse Operations Copilot")
 
-
-# Right side creator credit
-
 with col2:
-
     st.markdown(
         "<div style='text-align: right; padding-top: 25px;'>"
         "<i>Designed and developed by Rishabh</i>"
@@ -111,6 +98,7 @@ st.markdown(
     """
 )
 
+
 # Basic access control
 
 APP_PASSWORD = st.secrets.get("APP_PASSWORD", "")
@@ -121,24 +109,24 @@ password = st.text_input(
 )
 
 if password != APP_PASSWORD:
-
     st.warning("Please enter the correct password to access the copilot.")
-
     st.stop()
+
 
 # Load API key
 
 load_dotenv()
 
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets.get(
+    "OPENAI_API_KEY",
+    os.getenv("OPENAI_API_KEY")
+)
 
 
 # Create OpenAI client
 
 client = OpenAI(api_key=api_key)
 
-
-# Load warehouse KPI dataset
 
 # Build dataset file path
 
@@ -149,70 +137,93 @@ dataset_path = os.path.abspath(
     )
 )
 
-# Load warehouse KPI dataset
-
-df = pd.read_excel(dataset_path)
 
 # Load warehouse KPI dataset
 
 df = pd.read_excel(dataset_path)
+
 
 # Apply anomaly detection
 
 df[["Anomaly_Flag", "Anomaly_Reason"]] = df.apply(
-
     lambda row: pd.Series(
-
         detect_anomaly(
             row=row,
             kpi_rules=kpi_rules
         )
-
     ),
-
     axis=1
 )
+
 
 # Initialize chat history
 
 if "chat_history" not in st.session_state:
-
     st.session_state.chat_history = []
+
+
+# Initialize selected question
+
+if "selected_question" not in st.session_state:
+    st.session_state.selected_question = ""
+
 
 # Display previous chat history
 
 if st.session_state.chat_history:
-
     st.subheader("Conversation History")
 
     for chat in reversed(st.session_state.chat_history):
-
         st.markdown(f"**You:** {chat['question']}")
-
         st.markdown(f"**Copilot:** {chat['answer']}")
-
         st.markdown("---")
 
+
 # Sample question buttons
+
+st.subheader("Quick Demo Questions")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("Top Managers by PickRate"):
+        st.session_state.selected_question = "Which top 2 DC_Manager has the highest PickRate?"
+
+    if st.button("Overtime Trend by Shift"):
+        st.session_state.selected_question = "Show overtime trend across shifts"
+
+    if st.button("Lowest Performing Warehouses"):
+        st.session_state.selected_question = "Tell 2 lowest PickRate warehouses"
+
+with col2:
+    if st.button("Team PickRate Trend"):
+        st.session_state.selected_question = "Show PickRate trend over time by Team"
+
+    if st.button("Top Employees"):
+        st.session_state.selected_question = "Show top 5 employees by PickRate"
+
+    if st.button("Most Anomalies"):
+        st.session_state.selected_question = "Which team leader has the most anomalies?"
+
+
+# Question input box
+
+question = st.text_input(
+    "Ask your warehouse KPI question:",
+    value=st.session_state.selected_question,
+    placeholder="Example: Show chart comparing PickRate across DC_Manager"
+)
 
 
 # Run copilot after button click
 
 if st.button("Ask Copilot"):
 
-    # Handle empty question
-
     if question.strip() == "":
-
         st.warning("Please enter a question.")
 
     else:
-
-        # Show loading spinner
-
         with st.spinner("Analyzing warehouse KPIs..."):
-
-            # Generate AI response
 
             result = ask_warehouse_copilot(
                 question=question,
@@ -222,32 +233,22 @@ if st.button("Ask Copilot"):
                 create_dynamic_summary=create_dynamic_summary
             )
 
-
-            # Display AI answer
-
             st.subheader("AI Answer")
 
             st.write(
                 result.get("ai_answer")
             )
-           
-            # Save conversation history
 
-            st.session_state.chat_history.append({
-
-            "question": question,
-
-            "answer": result.get("ai_answer")
-            })
-
-            # Detect chart intent
+            st.session_state.chat_history.append(
+                {
+                    "question": question,
+                    "answer": result.get("ai_answer")
+                }
+            )
 
             chart_intent = detect_chart_intent(question)
 
             fig = None
-
-
-            # Generate chart if required
 
             if chart_intent["chart_required"]:
 
@@ -258,26 +259,18 @@ if st.button("Ask Copilot"):
                     extract_top_bottom_n=extract_top_bottom_n
                 )
 
-                # Create Plotly chart
-
                 fig = create_dynamic_chart(
                     chart_data=chart_data,
                     chart_intent=chart_intent
                 )
 
-                # Display chart
-
                 if fig is not None:
-
                     st.subheader("Interactive Chart")
 
                     st.plotly_chart(
                         fig,
                         use_container_width=True
                     )
-
-
-            # Display KPI grounding data
 
             if result.get("context_table") is not None:
 

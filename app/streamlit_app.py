@@ -195,53 +195,6 @@ if st.session_state.chat_history:
 
 # Sample question buttons
 
-st.subheader("Quick Demo Questions")
-
-col1, col2 = st.columns(2)
-
-with col1:
-
-    if st.button("Top Managers by PickRate"):
-
-        question = "Which top 2 DC_Manager has the highest PickRate?"
-
-    if st.button("Overtime Trend by Shift"):
-
-        question = "Show overtime trend across shifts"
-
-    if st.button("Lowest Performing Warehouses"):
-
-        question = "Tell 2 lowest PickRate warehouses"
-
-
-with col2:
-
-    if st.button("Team PickRate Trend"):
-
-        question = "Show PickRate trend over time by Team"
-
-    if st.button("Top Employees"):
-
-        question = "Show top 5 employees by PickRate"
-
-    if st.button("Most Anomalies"):
-
-        question = "Which team leader has the most anomalies?"
-        
-# Create question input box
-
-    # Manual question input
-
-manual_question = st.text_input(
-    "Ask your warehouse KPI question:",
-    placeholder="Example: Show chart comparing PickRate across DC_Manager"
-)
-
-    # Override sample question if user types manually
-
-if manual_question.strip() != "":
-
-    question = manual_question
 
 # Run copilot after button click
 

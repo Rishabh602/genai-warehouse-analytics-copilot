@@ -1,0 +1,20 @@
+﻿KPI,WorldClass,Target,Warning,Critical,Direction,Business_Interpretation
+SelectionRate_Cases,195,180,160,140,Higher is better,Cases selected per productive hour
+PickRate,165,150,130,110,Higher is better,Picked units per productive hour
+ReplenishmentRate,155,140,120,100,Higher is better,Replenishment tasks completed per productive hour
+IdleSelectionTime_pct,4,5,8,12,Lower is better,Share of waiting/non-productive selection time
+OnTaskTime_pct,93,90,85,80,Higher is better,Share of labor time spent productively
+Overtime_pct,4,5,10,15,Lower is better,Overtime as percentage of scheduled labor
+LaborHours,7.5,8,9,10,Lower is better,Labor hours per employee day
+LaborCost_EUR,180,210,260,320,Lower is better,Daily labor cost per employee
+OrdersProcessed,310,280,230,180,Higher is better,Orders processed per employee day
+UnitsProcessed,1250,1050,850,650,Higher is better,Units processed per employee day
+ForecastVolume,1250,1050,850,650,Higher is better,Forecasted volume for planning
+ActualVolume,1250,1050,850,650,Higher is better,Actual volume processed
+CapacityUtilization_pct,88,82,92,98,Balanced is better,Warehouse capacity utilization
+EquipmentDowntime_Min,10,20,45,75,Lower is better,Equipment downtime minutes
+InventoryAccuracy_pct,99,98,95,92,Higher is better,Physical vs system stock accuracy
+PickingErrorRate_pct,1.0,1.5,3.0,5.0,Lower is better,Picking errors as percentage of picks
+OnTimeShipment_pct,99,98,95,90,Higher is better,Orders shipped on time
+Absenteeism_pct,2,3,6,8,Lower is better,Workforce absence percentage
+SafetyIncidents,0,0,2,4,Lower is better,Number of safety incidents

@@ -1,291 +1,159 @@
-# Import Libraries
+# Import KPI engine functions
+from kpi_engine import (
+    get_top_performers,
+    get_bottom_performers,
+    compare_performance
+)
 
-import plotly.express as px
+# Import benchmark engine functions
+from benchmark_engine import benchmark_kpi_summary
+
+# Import anomaly engine functions
+from anomaly_engine import get_anomaly_counts
+
+# Import KPI data loader
+from data_loader import load_kpi_data
 
 
-# Detect Chart Intent
+# Prepare top performer chart data
+def get_top_n_chart_data(kpi, group_by, n):
 
-def detect_chart_intent(question):
-
-    question_lower = question.lower()
-
-    chart_keywords = [
-        "chart",
-        "graph",
-        "plot",
-        "visualize",
-        "visualization",
-        "trend",
-        "dashboard"
-    ]
-
-    # Detect whether chart is required
-    chart_required = any(
-        keyword in question_lower
-        for keyword in chart_keywords
+    # Retrieve top performers
+    chart_data = get_top_performers(
+        kpi=kpi,
+        group_by=group_by,
+        n=n
     )
 
-    # Auto-enable charts for ranking/comparison questions
-    if any(word in question_lower for word in [
-        "compare",
-        "comparison",
-        "top",
-        "bottom",
-        "highest",
-        "lowest",
-        "best",
-        "worst"
-    ]):
-        chart_required = True
+    # Return chart-ready dataframe
+    return chart_data
 
-    # Detect chart type
-    if "trend" in question_lower or "over time" in question_lower:
 
-        chart_type = "line"
+# Prepare bottom performer chart data
+def get_bottom_n_chart_data(kpi, group_by, n):
 
-    elif "compare" in question_lower or "comparison" in question_lower:
-
-        chart_type = "bar"
-
-    elif "distribution" in question_lower:
-
-        chart_type = "histogram"
-
-    else:
-
-        chart_type = "bar"
-
-    # Detect time-based requirement
-    time_based = any(
-        word in question_lower
-        for word in [
-            "weekly",
-            "trend",
-            "over time",
-            "week"
-        ]
+    # Retrieve bottom performers
+    chart_data = get_bottom_performers(
+        kpi=kpi,
+        group_by=group_by,
+        n=n
     )
 
-    return {
-        "chart_required": chart_required,
-        "chart_type": chart_type,
-        "time_based": time_based
-    }
+    # Return chart-ready dataframe
+    return chart_data
 
 
-# Create Chart Data
+# Prepare comparison chart data
+def get_comparison_chart_data(group_by, selected_values, kpis):
 
-def create_chart_data(
-    data,
-    question,
-    kpi_rules,
-    extract_top_bottom_n
-):
+    # Compare selected entities
+    chart_data = compare_performance(
+        group_by=group_by,
+        selected_values=selected_values,
+        kpis=kpis
+    )
 
-    chart_intent = detect_chart_intent(question)
-
-    detected_kpi = None
-
-    question_lower = question.lower()
-
-    # Detect KPI from question
-    for kpi in kpi_rules.keys():
-
-        normalized_kpi = (
-            kpi.lower()
-            .replace("_", "")
-            .replace("%", "")
-        )
-
-        normalized_question = (
-            question_lower
-            .replace(" ", "")
-            .replace("_", "")
-        )
-
-        if normalized_kpi in normalized_question:
-
-            detected_kpi = kpi
-            break
-
-        # Fallback KPI detection for natural language terms
-
-    if detected_kpi is None:
-
-        if "pickrate" in question_lower or "pick rate" in question_lower:
-            detected_kpi = "PickRate"
-
-        elif "selection" in question_lower:
-            detected_kpi = "SelectionRate_Cases"
-
-        elif "replenishment" in question_lower:
-            detected_kpi = "ReplenishmentRate"
-
-        elif "idle" in question_lower:
-            detected_kpi = "IdleSelectionTime_pct"
-
-        elif "ontask" in question_lower or "on task" in question_lower:
-            detected_kpi = "OnTaskTime_pct"
-
-        elif "overtime" in question_lower:
-            detected_kpi = "Overtime_pct"
-            
-    chart_intent["detected_kpi"] = detected_kpi
+    # Return chart-ready dataframe
+    return chart_data
 
 
-    time_based = chart_intent["time_based"]
+# Prepare benchmark distribution chart data
+def get_benchmark_distribution_data(group_by, kpi):
 
-    ranking_type, n = extract_top_bottom_n(question)
+    # Get KPI summary with benchmark classification
+    benchmark_data = benchmark_kpi_summary(
+        group_by=group_by,
+        kpi=kpi
+    )
 
-    # Handle missing KPI
-    if detected_kpi is None:
+    # Count status categories
+    distribution = (
+        benchmark_data
+        .groupby("Benchmark_Status")
+        .size()
+        .reset_index(name="Count")
+    )
 
-        return None, "No KPI detected in question."
+    # Return distribution table
+    return distribution
 
-    # Detect aggregation level
-    if "manager" in question_lower or "dc_manager" in question_lower:
 
-        group_columns = ["DC_Manager"]
+# Prepare anomaly count chart data
+def get_anomaly_chart_data(group_by, kpis):
 
-    elif "team leader" in question_lower or "leader" in question_lower:
+    # Get anomaly counts
+    anomaly_data = get_anomaly_counts(
+        group_by=group_by,
+        kpis=kpis
+    )
 
-        group_columns = ["Team_Leader"]
+    # Return anomaly count table
+    return anomaly_data
 
-    elif "team" in question_lower:
 
-        group_columns = ["Team"]
+# Prepare weekly trend chart data
+def get_trend_chart_data(kpi, group_by, entity_value):
 
-    elif "shift" in question_lower:
+    # Load KPI fact table
+    df = load_kpi_data()
 
-        group_columns = ["Shift"]
+    # Filter selected entity
+    df = df[df[group_by] == entity_value]
 
-    elif "employee" in question_lower:
-
-        group_columns = ["Employee_ID"]
-
-    else:
-
-        group_columns = ["Distribution_Center"]
-
-    # Handle week sorting
-    if time_based:
-
-        data = data.copy()
-
-        data["Week_Number"] = (
-            data["Week"]
-            .str.replace("WK", "", regex=False)
-            .astype(int)
-        )
-
-        group_columns = ["Week_Number", "Week"] + group_columns
-
-    # Create aggregated chart dataset
-    chart_data = (
-        data
-        .groupby(group_columns)[detected_kpi]
+    # Aggregate KPI by week
+    trend_data = (
+        df.groupby("Week_Number")[kpi]
         .mean()
-        .round(2)
         .reset_index()
+        .sort_values("Week_Number")
     )
 
-    # Sort weeks correctly
-    if time_based:
+    # Return trend dataset
+    return trend_data
 
-        chart_data = chart_data.sort_values("Week_Number")
 
-    # Apply ranking logic
-    comparison = kpi_rules[detected_kpi]["comparison"]
+# Run tests only when executed directly
+if __name__ == "__main__":
 
-    if ranking_type == "top":
-
-        ascending = False if comparison == "higher" else True
-
-    elif ranking_type == "bottom":
-
-        ascending = True if comparison == "higher" else False
-
-    else:
-
-        ascending = False if comparison == "higher" else True
-
-    chart_data = chart_data.sort_values(
-        detected_kpi,
-        ascending=ascending
+    print("\nTop Employees by PickRate")
+    print(
+        get_top_n_chart_data(
+            kpi="PickRate",
+            group_by="Employee_ID",
+            n=10
+        ).head()
     )
 
-    # Apply top/bottom filtering
-    if ranking_type is not None and n is not None:
+    print("\nBottom Managers by Overtime")
+    print(
+        get_bottom_n_chart_data(
+            kpi="Overtime_pct",
+            group_by="DC_Manager",
+            n=5
+        ).head()
+    )
 
-        chart_data = chart_data.head(n)
-
-    return chart_data, chart_intent
-
-
-# Create Interactive Chart
-
-def create_dynamic_chart(chart_data, chart_intent):
-
-    # Handle empty chart data
-    if chart_data is None:
-
-        return None
-
-    detected_kpi = chart_intent["detected_kpi"]
-
-    time_based = chart_intent["time_based"]
-
-    # Create line chart for trends
-    if time_based:
-
-        chart_data = chart_data.sort_values("Week_Number")
-
-        color_columns = [
-            col for col in chart_data.columns
-            if col not in [
-                "Week_Number",
-                "Week",
-                detected_kpi
-            ]
-        ]
-
-        color_axis = (
-            color_columns[0]
-            if len(color_columns) > 0
-            else None
+    print("\nWarehouse Comparison")
+    print(
+        get_comparison_chart_data(
+            group_by="DC_ID",
+            selected_values=["DC003", "DC006", "DC008"],
+            kpis=["PickRate", "Overtime_pct"]
         )
+    )
 
-        fig = px.line(
-            chart_data,
-            x="Week",
-            y=detected_kpi,
-            color=color_axis,
-            markers=True,
-            title=f"{detected_kpi} Trend Over Time"
+    print("\nBenchmark Distribution")
+    print(
+        get_benchmark_distribution_data(
+            group_by="DC_ID",
+            kpi="PickRate"
         )
+    )
 
-        # Force proper week order
-        fig.update_xaxes(
-            categoryorder="array",
-            categoryarray=chart_data["Week"].unique()
-        )
-
-    # Create bar chart for comparisons
-    else:
-
-        x_axis = [
-            col for col in chart_data.columns
-            if col not in [
-                detected_kpi,
-                "Week_Number"
-            ]
-        ][0]
-
-        fig = px.bar(
-            chart_data,
-            x=x_axis,
-            y=detected_kpi,
-            title=f"{detected_kpi} by {x_axis}"
-        )
-
-    return fig
+    print("\nAnomaly Counts")
+    print(
+        get_anomaly_chart_data(
+            group_by="DC_Manager",
+            kpis=["PickRate", "Overtime_pct"]
+        ).head()
+    )

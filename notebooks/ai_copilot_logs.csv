@@ -1,0 +1,261 @@
+timestamp,question,moderation_status,summary_level,ai_answer,answer_length,has_recommendation,mentions_kpi,mentions_context_entity,overall_status
+2026-05-21 07:22:21,Which DC has the worst overtime performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst overtime performance is **FD05**, which has an Overtime percentage of **6.72%**. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Key Insights:
+- **Overtime Performance**: FD05 has the highest Overtime percentage among the distribution centers, indicating potential inefficiencies in labor management or workload distribution.
+- **Operational Drivers**: The Overtime percentage is a critical KPI that can signal issues with selection rates, pick rates, or overall operational efficiency.
+
+### Anomaly Patterns:
+- All DCs have a relatively high Anomaly Count, with FD05 having **1068** anomalies, which may correlate with its overtime issues.
+
+### Recommendations:
+1. **Investigate Workload Distribution**: Analyze the workload and staffing levels at FD05 to identify if the overtime is due to insufficient staffing or operational bottlenecks.
+2. **Enhance Training**: Consider additional training for staff to improve efficiency and reduce the need for overtime.
+3. **Monitor Anomalies**: Focus on resolving the anomalies reported to improve overall operational performance and reduce overtime.
+
+By addressing these areas, FD05 can potentially improve its overtime performance and overall operational efficiency.",1253,True,False,True,Needs Review
+2026-05-21 07:26:26,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is **FD01**, which has a PickRate of **159.33**. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Key Insights:
+- **PickRate** is a critical KPI that measures the efficiency of order picking. FD01's PickRate is lower than that of other DCs, indicating potential inefficiencies in the picking process.
+- The other DCs have the following PickRates:
+  - FD02: 159.49
+  - FD04: 159.62
+  - FD03: 160.10
+  - FD05: 160.27
+
+### Important KPI Drivers:
+- The **SelectionRate_Cases** and **ReplenishmentRate** are relatively consistent across the DCs, suggesting that the issue may lie in the picking process itself rather than in the volume of cases selected or replenished.
+
+### Anomaly Patterns:
+- FD01 has an **Anomaly_Count** of 1060, which is significant and indicates potential operational issues that may be affecting PickRate.
+
+### Recommendations:
+1. **Investigate Picking Processes**: Conduct a detailed analysis of the picking workflows in FD01 to identify bottlenecks or inefficiencies.
+2. **Training and Support**: Provide additional training or resources to the picking team in FD01 to enhance their efficiency.
+3. **Monitor Anomalies**: Focus on understanding the causes of the high anomaly count in FD01 to mitigate operational disruptions.
+
+By addressing these areas, FD01 can improve its PickRate and overall operational efficiency.",1402,True,True,True,Good
+2026-05-21 07:29:26,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- DC
+
+### Important KPI Drivers:
+- PickRate: 159.33 (lowest among all DCs)
+- SelectionRate_Cases: 174.48 (indicates the volume of cases selected)
+- Anomaly_Count: 1060 (suggests potential operational issues)
+
+### Anomaly Patterns:
+FD01 has a high anomaly count, which may indicate underlying issues affecting its PickRate performance.
+
+### Operational Insight:
+FD01's PickRate is the lowest, suggesting inefficiencies in picking operations compared to other DCs. This could impact overall productivity and order fulfillment.
+
+### Recommendations:
+1. Investigate the causes of anomalies at FD01 to identify and resolve operational inefficiencies.
+2. Consider implementing targeted training for staff to improve picking efficiency.
+3. Analyze workflow processes to streamline operations and enhance PickRate.
+
+By addressing these areas, FD01 can potentially improve its PickRate and overall operational performance.",1051,True,True,True,Good
+2026-05-21 16:02:46,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- DC
+
+### Key Insights:
+- **PickRate Performance**: FD01 has the lowest PickRate compared to other DCs, indicating potential inefficiencies in picking operations.
+- **Anomaly Patterns**: FD01 has a high Anomaly_Count of 1060, which may correlate with its lower PickRate, suggesting operational disruptions or inconsistencies.
+
+### Recommendations:
+1. **Investigate Anomalies**: Conduct a detailed analysis of the anomalies reported in FD01 to identify root causes and implement corrective actions.
+2. **Process Optimization**: Review and optimize picking processes and workflows to enhance efficiency and improve the PickRate.
+3. **Training**: Consider additional training for staff at FD01 to address any skill gaps that may be impacting performance.
+
+By focusing on these areas, FD01 can improve its operational efficiency and overall PickRate performance.",996,True,True,True,Good
+2026-05-21 16:04:01,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+**Hierarchy Level:** DC
+
+**KPI Drivers:**
+- FD01's PickRate is lower than FD02 (159.49), FD04 (159.62), FD03 (160.10), and FD05 (160.27), indicating it is the least efficient in picking operations among the centers analyzed.
+
+**Anomaly Patterns:**
+- FD01 has a high Anomaly_Count of 1060, suggesting potential operational issues that could be impacting its PickRate.
+
+**Operational Insight:**
+- The lower PickRate at FD01 may be attributed to inefficiencies in the picking process or higher operational disruptions, as indicated by the anomaly count.
+
+**Recommendations:**
+1. Investigate the causes of anomalies in FD01 to identify and rectify operational inefficiencies.
+2. Consider implementing targeted training or process improvements for the picking team at FD01 to enhance performance.
+3. Monitor the PickRate closely to assess the impact of any changes made.
+
+By focusing on these areas, FD01 can improve its PickRate and overall operational efficiency.",1068,True,True,True,Good
+2026-05-21 20:59:51,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Key Insights:
+- **PickRate Performance**: FD01 has the lowest PickRate compared to other DCs, indicating potential inefficiencies in picking operations.
+- **Comparison**: 
+  - FD02: 159.49
+  - FD04: 159.62
+  - FD03: 160.10
+  - FD05: 160.27
+
+### KPI Drivers:
+- **SelectionRate_Cases**: FD01 has a SelectionRate of 174.48, which is competitive, suggesting that the issue may lie in the execution of the picking process rather than the volume of cases selected.
+- **IdleSelectionTime_pct**: At 7.94%, FD01's IdleSelectionTime is relatively low, indicating that time spent not actively picking is not the primary issue.
+- **OnTaskTime_pct**: At 88.97%, this suggests that the majority of time is spent on task, which is positive.
+
+### Anomaly Patterns:
+- FD01 has an Anomaly_Count of 1060, which is significant and may indicate operational disruptions or inconsistencies that could be impacting PickRate.
+
+### Recommendations:
+1. **Investigate Operational Processes**: Conduct a detailed analysis of the picking processes at FD01 to identify bottlenecks or inefficiencies.
+2. **Training and Support**: Consider additional training for staff to enhance picking efficiency.
+3. **Monitor Anomalies**: Address the high anomaly count to reduce disruptions in operations.
+
+By focusing on these areas, FD01 can improve its PickRate performance and overall operational efficiency.",1520,True,True,True,Good
+2026-05-21 21:09:25,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- DC
+
+### Key Insights:
+- **PickRate Performance**: FD01 has the lowest PickRate compared to other DCs, indicating potential inefficiencies in the picking process.
+- **Comparison**: 
+  - FD02: 159.49
+  - FD04: 159.62
+  - FD03: 160.10
+  - FD05: 160.27
+
+### KPI Drivers:
+- The PickRate is critical for assessing the efficiency of order fulfillment. A lower PickRate may suggest issues such as inadequate staffing, training, or process inefficiencies.
+
+### Anomaly Patterns:
+- FD01 has a high Anomaly_Count of 1060, which may correlate with its lower PickRate, indicating potential operational disruptions.
+
+### Recommendations:
+1. **Investigate Operational Processes**: Conduct a thorough review of picking processes at FD01 to identify bottlenecks.
+2. **Staff Training**: Enhance training programs for employees to improve picking efficiency.
+3. **Monitor Anomalies**: Address the high anomaly count to reduce disruptions and improve overall performance.
+
+By focusing on these areas, FD01 can enhance its PickRate and overall operational efficiency.",1186,True,True,True,Good
+2026-05-21 21:50:01,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- DC
+
+### Key Insights:
+- **PickRate Performance**: FD01 has the lowest PickRate compared to other DCs, indicating potential inefficiencies in picking operations.
+- **Comparison with Peers**: 
+  - FD02: 159.49
+  - FD04: 159.62
+  - FD03: 160.10
+  - FD05: 160.27
+
+### Important KPI Drivers:
+- The PickRate is critical for assessing the efficiency of order fulfillment. A lower PickRate may suggest issues such as inadequate staffing, training, or process inefficiencies.
+
+### Anomaly Patterns:
+- FD01 has a high Anomaly_Count of 1060, which may correlate with its lower PickRate, indicating operational disruptions that need to be addressed.
+
+### Recommendations:
+1. **Investigate Operational Inefficiencies**: Conduct a root cause analysis to identify factors contributing to the low PickRate in FD01.
+2. **Enhance Training**: Implement targeted training programs for staff to improve picking efficiency.
+3. **Monitor Anomalies**: Regularly review and address the anomalies to minimize disruptions in the picking process.
+
+By focusing on these areas, FD01 can improve its PickRate and overall operational performance.",1254,True,True,True,Good
+2026-05-21 21:53:51,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- DC
+
+### Important KPI Drivers:
+- PickRate: 159.33 (lowest among all DCs)
+- SelectionRate_Cases: 174.48 (indicates the volume of cases selected)
+- Anomaly_Count: 1060 (high anomaly count may indicate operational inefficiencies)
+
+### Anomaly Patterns:
+FD01 has a significant anomaly count of 1060, which could be contributing to its lower PickRate performance.
+
+### Operational Recommendations:
+1. Investigate the causes of high anomaly counts in FD01 to identify operational inefficiencies.
+2. Implement targeted training for staff to improve selection accuracy and efficiency.
+3. Review and optimize picking processes to enhance overall PickRate.
+
+By addressing these areas, FD01 can potentially improve its PickRate performance and overall operational efficiency.",904,True,True,True,Good
+2026-05-21 21:59:09,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Key Insights:
+- **PickRate Performance**: FD01 has the lowest PickRate compared to other DCs, indicating potential inefficiencies in the picking process.
+- **Comparison with Peers**: The other DCs (FD02, FD03, FD04, FD05) have higher PickRates, with FD05 being the highest at 160.27.
+
+### Important KPI Drivers:
+- **SelectionRate_Cases**: FD01 has a SelectionRate of 174.48, which is competitive but not translating into a higher PickRate.
+- **IdleSelectionTime_pct**: At 7.94%, FD01's IdleSelectionTime is relatively low, suggesting that the issue may not be related to idle time.
+- **OnTaskTime_pct**: At 88.97%, this indicates that the majority of time is spent on task, yet the PickRate remains low.
+
+### Anomaly Patterns:
+- FD01 has an Anomaly_Count of 1060, which is significant and may indicate operational disruptions affecting performance.
+
+### Recommendations:
+1. **Investigate Operational Processes**: Conduct a detailed analysis of the picking processes at FD01 to identify bottlenecks or inefficiencies.
+2. **Benchmarking**: Compare best practices from higher-performing DCs (like FD05) to implement improvements.
+3. **Training and Support**: Consider additional training for staff at FD01 to enhance picking efficiency.
+
+By addressing these areas, FD01 can improve its PickRate and overall operational efficiency.",1479,True,True,True,Good
+2026-05-21 22:02:54,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is **FD01**, which has a PickRate of **159.33**. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Important KPI Drivers:
+- The PickRate is a critical measure of efficiency in order picking operations. 
+
+### Anomaly Patterns:
+- FD01 has a relatively high Anomaly_Count of **1060**, indicating potential operational issues that may be impacting performance.
+
+### Recommendations:
+1. Investigate the causes of the high anomaly count in FD01 to identify and address operational inefficiencies.
+2. Consider implementing targeted training or process improvements to enhance PickRate performance in this DC.
+
+By focusing on these areas, FD01 can improve its operational efficiency and overall performance.",760,True,True,True,Good
+2026-05-21 22:08:06,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center (DC) with the worst PickRate performance is FD01, which has a PickRate of 159.33. 
+
+### Relevant Hierarchy Level:
+- **DC**
+
+### Important KPI Drivers:
+- PickRate: 159.33 (lowest among all DCs)
+- SelectionRate_Cases: 174.48
+- ReplenishmentRate: 145.28
+- IdleSelectionTime_pct: 7.94%
+- OnTaskTime_pct: 88.97%
+- Overtime_pct: 5.99%
+- Anomaly_Count: 1060
+
+### Anomaly Patterns:
+FD01 has a relatively high Anomaly_Count of 1060, which may indicate operational inefficiencies that could be impacting PickRate.
+
+### Operational Recommendations:
+1. Investigate the causes of anomalies in FD01 to identify and mitigate operational issues.
+2. Analyze the IdleSelectionTime and OnTaskTime to optimize workflow and improve PickRate.
+3. Consider benchmarking against higher-performing DCs (e.g., FD05 with a PickRate of 160.27) to implement best practices.
+
+By addressing these areas, FD01 can enhance its PickRate performance and overall operational efficiency.",973,True,True,True,Good
+2026-05-21 22:33:03,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center with the worst PickRate performance is FD01, which has a PickRate of 159.33.",100,False,True,True,Needs Review
+2026-05-21 22:41:19,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center with the worst PickRate performance is FD01, with a PickRate of 159.33.",95,False,True,True,Needs Review
+2026-05-21 22:48:40,Which DC has the worst PickRate performance?,approved,Distribution Center Level,"The Distribution Center with the worst PickRate performance is FD01, which has a PickRate of 159.33.",100,False,True,True,Needs Review

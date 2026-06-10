@@ -1,0 +1,41 @@
+﻿Rule_ID,KPI,Condition,Severity,Recommendation,Suggested_Owner
+R001,PickRate,<110,Critical,"Investigate training, slotting, travel distance and process bottlenecks.",DC Manager
+R002,PickRate,110-130,Warning,"Review shift allocation, employee mix and pick-wave planning.",Team Leader
+R003,PickRate,>165,Positive,Document best practice and share across peer warehouses.,Operations Excellence
+R004,SelectionRate_Cases,<140,Critical,"Audit selection process, replenishment availability and task release timing.",Operations Manager
+R005,SelectionRate_Cases,140-160,Warning,Compare selection performance across shifts and team leaders.,Shift Manager
+R006,ReplenishmentRate,<100,Critical,"Review replenishment queue, stock availability and inbound coordination.",Replenishment Lead
+R007,ReplenishmentRate,100-120,Warning,Monitor replenishment delay patterns and workload allocation.,Team Leader
+R008,IdleSelectionTime_pct,>12,Critical,"Investigate waiting time, equipment availability and replenishment delays.",Team Leader
+R009,IdleSelectionTime_pct,8-12,Warning,Review pick-wave timing and workload balancing.,Shift Manager
+R010,OnTaskTime_pct,<80,Critical,"Investigate downtime, task interruptions and process compliance.",Operations Manager
+R011,OnTaskTime_pct,80-85,Warning,Review team utilization and shift execution discipline.,Team Leader
+R012,Overtime_pct,>15,Critical,"Increase workforce coverage, rebalance shifts or adjust labor forecast.",DC Manager
+R013,Overtime_pct,10-15,Warning,Review temporary labor planning and workload forecast accuracy.,Workforce Planner
+R014,LaborHours,>10,Critical,Assess labor productivity and shift scheduling efficiency.,DC Manager
+R015,LaborCost_EUR,>320,Critical,"Review labor mix, overtime dependency and productivity leakage.",Finance Partner
+R016,OrdersProcessed,<180,Critical,Investigate capacity constraints and order flow bottlenecks.,Operations Manager
+R017,UnitsProcessed,<650,Critical,Review throughput constraints and labor deployment.,DC Manager
+R018,CapacityUtilization_pct,>98,Critical,Escalate capacity risk and review temporary overflow options.,Regional Director
+R019,CapacityUtilization_pct,>92,Warning,Monitor space utilization and inbound volume planning.,DC Manager
+R020,EquipmentDowntime_Min,>75,Critical,Escalate maintenance issue and assess process disruption impact.,Maintenance Lead
+R021,EquipmentDowntime_Min,45-75,Warning,Review recurring downtime patterns and maintenance schedule.,Shift Manager
+R022,InventoryAccuracy_pct,<92,Critical,Start cycle count and inventory reconciliation immediately.,Inventory Lead
+R023,InventoryAccuracy_pct,92-95,Warning,Review inventory movement controls and stock placement accuracy.,Inventory Lead
+R024,PickingErrorRate_pct,>5,Critical,"Review quality checks, picker training and process compliance.",Quality Lead
+R025,PickingErrorRate_pct,3-5,Warning,Increase sampling checks and identify error-prone zones.,Quality Lead
+R026,OnTimeShipment_pct,<90,Critical,Escalate service risk and review dispatch capacity.,Operations Manager
+R027,OnTimeShipment_pct,90-95,Warning,Monitor order cycle time and late shipment drivers.,Shift Manager
+R028,Absenteeism_pct,>8,Critical,Trigger workforce review and absence root-cause analysis.,HR / Workforce Planner
+R029,Absenteeism_pct,6-8,Warning,Review absence trend and backup staffing plan.,Team Leader
+R030,SafetyIncidents,>4,Critical,Perform immediate safety audit and corrective action review.,Safety Lead
+R031,SafetyIncidents,2-4,Warning,Review incident types and reinforce safety briefing.,Safety Lead
+R032,ForecastVolume,ActualVolume > ForecastVolume by 15%,Warning,Review forecast accuracy and labor planning assumptions.,Workforce Planner
+R033,ForecastVolume,ActualVolume > ForecastVolume by 25%,Critical,Escalate planning variance and update capacity model.,Regional Operations
+R034,ActualVolume,High volume + high overtime,Critical,Separate volume-driven pressure from productivity issue.,Operations Manager
+R035,Low Productivity Cluster,PickRate low + Idle high,Critical,"Investigate process blockage, replenishment delay or system issue.",DC Manager
+R036,Labor Risk Cluster,Overtime high + Absenteeism high,Critical,Review staffing resilience and absence mitigation plan.,HR / DC Manager
+R037,Quality Risk Cluster,InventoryAccuracy low + PickingError high,Critical,Launch inventory and quality root-cause investigation.,Quality Lead
+R038,Service Risk Cluster,OnTimeShipment low + Capacity high,Critical,Review fulfillment capacity and dispatch bottlenecks.,Operations Manager
+R039,Safety Risk Cluster,Safety incidents rising,Critical,Pause affected process if needed and complete safety review.,Safety Lead
+R040,Benchmark Positive,Multiple KPIs world class,Positive,Capture best practices and include in regional performance review.,Operations Excellence

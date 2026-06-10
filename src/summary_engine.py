@@ -1,204 +1,83 @@
-import re
+# Import pandas for table handling
+import pandas as pd
+
+# Import anomaly and recommendation outputs
+from anomaly_engine import detect_anomalies, get_anomaly_counts, ANOMALY_KPIS
+from recommendation_engine import get_priority_recommendations
 
 
-def extract_top_bottom_n(question):
+# Build a short executive summary for a selected business level
+def generate_executive_summary(group_by, kpis):
+    # Detect anomalies for selected level and KPIs
+    anomalies = detect_anomalies(group_by=group_by, kpis=kpis)
 
-    question_lower = question.lower()
+    # Count anomalies by selected hierarchy level
+    anomaly_counts = get_anomaly_counts(group_by=group_by, kpis=kpis)
 
-    number_match = re.search(
-        r"(top|bottom|best|worst|highest|lowest)\s+(\d+)",
-        question_lower
-    )
+    # Generate priority recommendations from detected anomalies
+    recommendations = get_priority_recommendations(group_by=group_by, kpis=kpis)
 
-    reverse_number_match = re.search(
-        r"(\d+)\s+(top|bottom|best|worst|highest|lowest)",
-        question_lower
-    )
+    # Return simple message if there are no anomalies
+    if anomalies.empty:
+        return "No major operational risks detected for the selected scope."
 
-    if number_match:
-        ranking_type_word = number_match.group(1)
-        n = int(number_match.group(2))
+    # Count total anomalies
+    total_anomalies = len(anomalies)
 
-    elif reverse_number_match:
-        n = int(reverse_number_match.group(1))
-        ranking_type_word = reverse_number_match.group(2)
+    # Count critical anomalies
+    critical_count = len(anomalies[anomalies["Benchmark_Status"] == "Critical"])
 
+    # Count warning anomalies
+    warning_count = len(anomalies[anomalies["Benchmark_Status"] == "Warning"])
+
+    # Identify top risk entity if anomaly counts exist
+    if not anomaly_counts.empty:
+        top_risk_entity = anomaly_counts.iloc[0].to_dict()
     else:
-        ranking_type_word = None
-        n = None
+        top_risk_entity = {}
 
-    if ranking_type_word in ["top", "best", "highest"]:
-        ranking_type = "top"
-
-    elif ranking_type_word in ["bottom", "worst", "lowest"]:
-        ranking_type = "bottom"
-
+    # Extract first few priority recommendations
+    if not recommendations.empty:
+        top_recommendations = recommendations["Recommendation"].dropna().unique().tolist()[:3]
     else:
-        ranking_type = None
+        top_recommendations = []
 
-    return ranking_type, n
+    # Build summary text
+    summary = f"""
+Executive Summary:
+Detected {total_anomalies} operational risk signals.
 
-def create_dynamic_summary(data, question, kpi_rules):
+Severity Mix:
+- Critical issues: {critical_count}
+- Warning issues: {warning_count}
 
-    all_kpis = list(kpi_rules.keys())
-    question_lower = question.lower()
+Top Risk Area:
+{top_risk_entity}
 
-    ranking_type, n = extract_top_bottom_n(question)
+Recommended Management Actions:
+{top_recommendations}
+"""
 
-    include_week = any(word in question_lower for word in [
-        "week",
-        "weekly",
-        "trend",
-        "over time",
-        "wk"
-    ])
+    # Return executive summary text
+    return summary
 
-    if "employee" in question_lower:
 
-        group_columns = [
-            "Distribution_Center",
-            "DC_Manager",
-            "Team",
-            "Team_Leader",
-            "Shift",
-            "Employee_ID"
+# Run quick tests only when this file is executed directly
+if __name__ == "__main__":
+    # Test summary at warehouse level using core operational KPIs
+    print(generate_executive_summary(
+        group_by="DC_ID",
+        kpis=[
+            "PickRate",
+            "Overtime_pct",
+            "IdleSelectionTime_pct",
+            "InventoryAccuracy_pct",
+            "OnTimeShipment_pct"
         ]
+    ))
 
-        summary_level = "Employee Level"
-
-    elif "team leader" in question_lower or "leader" in question_lower:
-
-        group_columns = [
-            "Distribution_Center",
-            "DC_Manager",
-            "Team",
-            "Team_Leader",
-            "Shift"
-        ]
-
-        summary_level = "Team Leader Level"
-
-    elif "team" in question_lower:
-
-        group_columns = [
-            "Distribution_Center",
-            "DC_Manager",
-            "Team",
-            "Shift"
-        ]
-
-        summary_level = "Team Level"
-
-    elif "dc_manager" in question_lower or "dc manager" in question_lower or "manager" in question_lower:
-
-        group_columns = [
-            "DC_Manager"
-        ]
-
-        summary_level = "DC Manager Level"
-
-    elif "shift" in question_lower:
-
-        group_columns = [
-            "Distribution_Center",
-            "Shift"
-        ]
-
-        summary_level = "Shift Level"
-
-    else:
-
-        group_columns = [
-            "Distribution_Center"
-        ]
-
-        summary_level = "Distribution Center Level"
-
-    if include_week:
-
-        group_columns = ["Week"] + group_columns
-        summary_level = "Weekly " + summary_level
-
-    summary = data.groupby(group_columns)[all_kpis].mean().round(2).reset_index()
-
-    anomaly_summary = data.groupby(group_columns)["Anomaly_Flag"].apply(
-        lambda x: (x == "Anomaly").sum()
-    ).reset_index(name="Anomaly_Count")
-
-    summary = summary.merge(
-        anomaly_summary,
-        on=group_columns,
-        how="left"
-    )
-
-    selected_kpi = None
-
-    normalized_question = (
-        question_lower
-        .replace(" ", "")
-        .replace("_", "")
-        .replace("%", "")
-    )
-
-    for kpi in all_kpis:
-
-        normalized_kpi = (
-            kpi.lower()
-            .replace(" ", "")
-            .replace("_", "")
-            .replace("%", "")
-        )
-
-        if normalized_kpi in normalized_question:
-            selected_kpi = kpi
-            break
-
-    if selected_kpi is None:
-
-        if "pickrate" in question_lower or "pick rate" in question_lower:
-            selected_kpi = "PickRate"
-
-        elif "selection" in question_lower:
-            selected_kpi = "SelectionRate_Cases"
-
-        elif "replenishment" in question_lower:
-            selected_kpi = "ReplenishmentRate"
-
-        elif "idle" in question_lower:
-            selected_kpi = "IdleSelectionTime_pct"
-
-        elif "ontask" in question_lower or "on task" in question_lower:
-            selected_kpi = "OnTaskTime_pct"
-
-        elif "overtime" in question_lower:
-            selected_kpi = "Overtime_pct"
-
-    if selected_kpi is not None:
-
-        comparison = kpi_rules[selected_kpi]["comparison"]
-
-        if ranking_type == "top":
-            ascending = False if comparison == "higher" else True
-
-        elif ranking_type == "bottom":
-            ascending = True if comparison == "higher" else False
-
-        else:
-            ascending = False if comparison == "higher" else True
-
-        summary = summary.sort_values(
-            selected_kpi,
-            ascending=ascending
-        )
-
-    else:
-
-        summary = summary.sort_values(
-            "Anomaly_Count",
-            ascending=False
-        )
-
-    if ranking_type is not None and n is not None:
-        summary = summary.head(n)
-
-    return summary_level, summary
+    # Test summary at manager level using all anomaly KPIs
+    print(generate_executive_summary(
+        group_by="DC_Manager",
+        kpis=ANOMALY_KPIS
+    ))

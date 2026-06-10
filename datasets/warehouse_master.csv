@@ -1,0 +1,13 @@
+﻿DC_ID,DC_Name,Country,Region,Warehouse_Type,Capacity,Opened_Year,DC_Manager
+DC001,Amsterdam DC,Netherlands,Benelux,Urban Fulfillment,85000,2016,Manager_Amsterdam
+DC002,Rotterdam DC,Netherlands,Benelux,Port Distribution,120000,2014,Manager_Rotterdam
+DC003,Utrecht DC,Netherlands,Benelux,Central Distribution,95000,2018,Manager_Utrecht
+DC004,Eindhoven DC,Netherlands,Benelux,Regional Fulfillment,78000,2020,Manager_Eindhoven
+DC005,Muelheim DC,Germany,DACH,Retail Distribution,130000,2015,Manager_Muelheim
+DC006,Hamburg DC,Germany,DACH,Port Distribution,125000,2013,Manager_Hamburg
+DC007,Berlin DC,Germany,DACH,Urban Fulfillment,90000,2017,Manager_Berlin
+DC008,Munich DC,Germany,DACH,Regional Fulfillment,110000,2012,Manager_Munich
+DC009,Cologne DC,Germany,DACH,Retail Distribution,100000,2016,Manager_Cologne
+DC010,Frankfurt DC,Germany,DACH,Central Distribution,115000,2014,Manager_Frankfurt
+DC011,Brussels DC,Belgium,Benelux,Regional Fulfillment,76000,2019,Manager_Brussels
+DC012,Antwerp DC,Belgium,Benelux,Port Distribution,105000,2015,Manager_Antwerp

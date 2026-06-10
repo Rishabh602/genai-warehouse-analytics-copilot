@@ -1,5 +1,6 @@
 .env
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
-ai_copilot_logs.csv
+vector_db/
+logs/
+.streamlit/secrets.toml

@@ -1,0 +1,66 @@
+﻿File,Column,Description
+warehouse_kpi_data.csv,Date,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Week,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Month,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Country,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Region,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,DC_ID,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,DC_Name,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,DC_Manager,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Team_Leader,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Team,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Shift,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Employee_ID,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Employee_Name,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Role,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,SelectionRate_Cases,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,PickRate,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,ReplenishmentRate,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,IdleSelectionTime_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,OnTaskTime_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Overtime_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,LaborHours,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,LaborCost_EUR,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,OrdersProcessed,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,UnitsProcessed,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,ForecastVolume,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,ActualVolume,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,CapacityUtilization_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,EquipmentDowntime_Min,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,InventoryAccuracy_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,PickingErrorRate_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,OnTimeShipment_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Absenteeism_pct,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,SafetyIncidents,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+warehouse_kpi_data.csv,Anomaly_Scenario,"Warehouse KPI fact-table field used for analytics, benchmarking or investigation."
+employee_hierarchy.csv,Employee_ID,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Employee_Name,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Role,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Team,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Team_Leader,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Shift_Manager,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,DC_Manager,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,DC_ID,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Region,Employee hierarchy field used for organizational rollups.
+employee_hierarchy.csv,Country,Employee hierarchy field used for organizational rollups.
+warehouse_master.csv,DC_ID,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,DC_Name,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,Country,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,Region,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,Warehouse_Type,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,Capacity,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,Opened_Year,Warehouse master-data field used for site comparisons.
+warehouse_master.csv,DC_Manager,Warehouse master-data field used for site comparisons.
+warehouse_benchmarks.csv,KPI,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,WorldClass,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,Target,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,Warning,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,Critical,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,Direction,Benchmark field used for KPI classification.
+warehouse_benchmarks.csv,Business_Interpretation,Benchmark field used for KPI classification.
+recommendation_rules.csv,Rule_ID,Recommendation rule field used by recommendation logic.
+recommendation_rules.csv,KPI,Recommendation rule field used by recommendation logic.
+recommendation_rules.csv,Condition,Recommendation rule field used by recommendation logic.
+recommendation_rules.csv,Severity,Recommendation rule field used by recommendation logic.
+recommendation_rules.csv,Recommendation,Recommendation rule field used by recommendation logic.
+recommendation_rules.csv,Suggested_Owner,Recommendation rule field used by recommendation logic.

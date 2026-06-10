@@ -1,0 +1,9 @@
+﻿Category,Demo_Question,Expected_Capability
+Investigation,Why is DC003 underperforming?,"KPI analysis, anomaly detection, RAG, recommendations"
+Benchmarking,Compare all warehouses by PickRate and overtime.,Benchmarking and chart generation
+Anomaly,Which DC managers have the most anomalies this month?,Anomaly agent
+Trend,Show overtime trend across shifts.,Chart agent
+RAG,What is the acceptable idle time threshold?,RAG over SOP documents
+Recommendation,What actions should management take for high overtime?,Recommendation rules and SOP retrieval
+Memory,Compare that with last month.,Conversation memory
+Executive Summary,Summarize operational risks for Q3.,Reporting agent

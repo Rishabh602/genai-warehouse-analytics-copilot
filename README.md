@@ -1,45 +1,104 @@
-# GenAI Warehouse Operations Copilot
+# WarehouseGPT – Enterprise Warehouse Performance Investigation Copilot
 
-This project is a prototype of a GenAI-powered warehouse analytics assistant built using Python, OpenAI, Streamlit, and Plotly.
+## Overview
 
-The goal of the project was to explore how Large Language Models (LLMs) can be combined with traditional KPI analytics to help warehouse operations teams analyze performance data using natural language questions.
+WarehouseGPT is a GenAI-powered warehouse operations copilot designed to help warehouse leaders investigate operational performance, identify anomalies, benchmark KPIs, and receive actionable recommendations through natural language interaction.
 
-Instead of manually filtering dashboards, users can ask questions such as:
-
-- Which managers have the highest PickRate?
-- Show overtime trend across shifts
-- Which teams have the most anomalies?
-- Show top employees by productivity
-
-The system dynamically aggregates warehouse KPI data, detects anomalies, generates business-friendly AI insights, and creates interactive visualizations.
+The solution combines traditional analytics with Generative AI to transform warehouse KPI data into business-ready operational insights.
 
 ---
 
-# Why I Built This
+## Business Problem
 
-Warehouse operations usually involve large KPI dashboards and manual analysis across managers, teams, shifts, and employees.
+Warehouse operations generate large volumes of KPI data across distribution centers, managers, teams, shifts, and employees.
 
-I wanted to experiment with how GenAI could act as an operational analytics copilot that explains warehouse performance in a more conversational and business-friendly way.
+Although dashboards can show performance metrics, they often do not explain:
 
-The focus of this project was not only AI responses, but also:
-- dynamic KPI aggregation
-- explainable AI grounding
-- anomaly detection
-- prompt engineering
-- modular backend design
-- interactive chart generation
+* Why performance deteriorated
+* Which areas require attention
+* What operational risks exist
+* What corrective actions should be taken
+
+WarehouseGPT acts as an AI-powered investigation assistant that helps users analyze warehouse performance more efficiently.
 
 ---
 
-# Main Features
+## Key Features
 
-- Dynamic warehouse KPI summarization
-- AI-generated operational insights
-- OpenAI integration
-- KPI anomaly detection
-- Trend analysis
-- Top/bottom ranking detection
-- Interactive Plotly charts
-- Streamlit frontend
-- Moderation and scope validation
-- Explainable KPI context tables
+### KPI Analytics Engine
+
+* Dynamic KPI aggregation
+* Multi-level hierarchy analysis
+* Top and bottom performer identification
+* KPI trend analysis
+
+### Benchmark Engine
+
+* Compare KPI performance against operational benchmarks
+* KPI classification:
+
+  * World Class
+  * On Target
+  * Warning
+  * Critical
+
+### Anomaly Detection Engine
+
+* Detect abnormal warehouse performance
+* Identify KPI deviations
+* Highlight operational risks
+
+### Recommendation Engine
+
+* Generate operational improvement recommendations
+* Link KPI issues to corrective actions
+* Provide business-friendly guidance
+
+### Executive Summary Engine
+
+* Generate management-ready summaries
+* Convert KPI results into business language
+
+### Visualization Engine
+
+* Interactive Plotly charts
+* Top and bottom performer analysis
+* KPI trend visualizations
+* Benchmark distribution charts
+* Anomaly overview dashboards
+
+### Retrieval-Augmented Generation (RAG)
+
+* Search warehouse operational documents
+* Retrieve SOP guidance
+* Provide grounded AI responses
+
+### LangGraph Workflow
+
+* Multi-step workflow orchestration
+* Memory-enabled AI interactions
+* Structured decision flow
+
+### Streamlit User Interface
+
+* Interactive analytics dashboard
+* Natural language question answering
+* KPI exploration and visualization
+
+---
+
+## Architecture
+
+WarehouseGPT follows a modular architecture:
+
+```text
+User -> Streamlit UI ->LangGraph Workflow ->
+   │
+   ├── KPI Engine
+   ├── Benchmark Engine
+   ├── Anomaly Engine
+   ├── Recommendation Engine
+   ├── Summary Engine
+   ├── Visualization Engine
+   └──
+```

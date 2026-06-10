@@ -12,6 +12,6 @@ langchain-community
 langchain-openai
 langgraph
 chromadb
-pypdf
+langchain-text-splitters
 
 crewai

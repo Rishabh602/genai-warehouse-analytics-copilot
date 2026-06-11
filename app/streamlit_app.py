@@ -8,6 +8,7 @@ import os
 # Import dotenv for environment variables
 from dotenv import load_dotenv
 
+from question_parser import parse_question
 
 # -----------------------------
 # Project path setup
@@ -485,51 +486,111 @@ if st.button("Ask Copilot"):
 
         with st.spinner("Analyzing warehouse KPIs..."):
 
-            workflow_app = build_workflow()
-
-            question_lower = question.lower()
-
-            if "trend" in question_lower:
-                intent = "comparison"
-                ranking_type = "top"
-
-            elif "bottom" in question_lower or "lowest" in question_lower:
-                intent = "ranking"
-                ranking_type = "bottom"
-
-            else:
-                intent = "ranking"
-                ranking_type = "top"
-
-            workflow_state = {
-                "user_question": question,
-                "intent": intent,
-                "kpi": kpi,
-                "group_by": group_by,
-                "ranking_type": ranking_type,
-                "n": n,
-                "needs_rag": False
-            }
-
-            config = {
-                "configurable": {
-                    "thread_id": "streamlit-session"
-                }
-            }
-
-            result = workflow_app.invoke(
-                workflow_state,
-                config=config
+            parsed_question = parse_question(
+                question=question,
+                default_kpi=kpi,
+                default_group_by=group_by,
+                default_n=n
             )
 
-            answer = result.get("final_answer", "")
+            selected_kpi = parsed_question["kpi"]
+            selected_group_by = parsed_question["group_by"]
+            selected_n = parsed_question["n"]
+            intent = parsed_question["intent"]
+            ranking_type = parsed_question["ranking_type"]
 
-            st.subheader("AI Answer")
-            st.write(answer)
+            if intent == "trend" and "Week_Number" in df.columns:
+
+                trend_df = (
+                    df
+                    .groupby(["Week_Number", selected_group_by])[selected_kpi]
+                    .mean()
+                    .reset_index()
+                    .sort_values("Week_Number")
+                )
+
+                st.subheader("AI Answer")
+                st.write(
+                    f"Trend analysis completed for **{selected_kpi}** across **{selected_group_by}**. "
+                    f"The chart below shows weekly KPI movement."
+                )
+
+                fig = create_trend_chart(
+                    df=df,
+                    kpi=selected_kpi
+                )
+
+                st.subheader("Analysis Chart")
+                st.plotly_chart(fig, use_container_width=True)
+
+                st.subheader("Analysis Data")
+                st.dataframe(trend_df, use_container_width=True)
+
+                answer_text = f"Trend analysis completed for {selected_kpi} across {selected_group_by}."
+
+            elif intent == "ranking":
+
+                if ranking_type == "bottom":
+
+                    result_df = get_bottom_performers(
+                        kpi=selected_kpi,
+                        group_by=selected_group_by,
+                        n=selected_n
+                    )
+
+                    fig = create_bottom_performer_chart(
+                        bottom_df=result_df,
+                        group_by=selected_group_by,
+                        kpi=selected_kpi,
+                        n=selected_n
+                    )
+
+                    answer_text = (
+                        f"Bottom {selected_n} ranking completed for **{selected_kpi}** "
+                        f"at **{selected_group_by}** level."
+                    )
+
+                else:
+
+                    result_df = get_top_performers(
+                        kpi=selected_kpi,
+                        group_by=selected_group_by,
+                        n=selected_n
+                    )
+
+                    fig = create_top_performer_chart(
+                        top_df=result_df,
+                        group_by=selected_group_by,
+                        kpi=selected_kpi,
+                        n=selected_n
+                    )
+
+                    answer_text = (
+                        f"Top {selected_n} ranking completed for **{selected_kpi}** "
+                        f"at **{selected_group_by}** level."
+                    )
+
+                st.subheader("AI Answer")
+                st.write(answer_text)
+
+                st.subheader("Analysis Chart")
+                st.plotly_chart(fig, use_container_width=True)
+
+                st.subheader("Analysis Data")
+                st.dataframe(result_df, use_container_width=True)
+
+            else:
+
+                answer_text = (
+                    "I understood the question, but this specific analysis type is not fully connected yet."
+                )
+
+                st.subheader("AI Answer")
+                st.write(answer_text)
 
             st.session_state.chat_history.append(
                 {
                     "question": question,
-                    "answer": str(answer)
+                    "answer": answer_text
                 }
             )

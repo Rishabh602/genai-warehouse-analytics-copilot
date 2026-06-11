@@ -8,8 +8,6 @@ import os
 # Import dotenv for environment variables
 from dotenv import load_dotenv
 
-from question_parser import parse_question
-
 # -----------------------------
 # Project path setup
 # -----------------------------
@@ -26,6 +24,7 @@ sys.path.insert(0, src_path)
 # -----------------------------
 # Import final project engines
 # -----------------------------
+from question_parser import parse_question
 
 from data_loader import load_kpi_data
 

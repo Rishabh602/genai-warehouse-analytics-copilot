@@ -2,40 +2,61 @@ import re
 
 
 KPI_ALIASES = {
+    "total safety incidents": "SafetyIncidents",
+    "safety incidents": "SafetyIncidents",
+    "safetyincidents": "SafetyIncidents",
+    "safety": "SafetyIncidents",
+
+    "replenishmentrate": "ReplenishmentRate",
+    "replenishment": "ReplenishmentRate",
+
+    "selectionrate": "SelectionRate_Cases",
+    "selection": "SelectionRate_Cases",
+
     "pickrate": "PickRate",
     "pick rate": "PickRate",
-    "replenishment": "ReplenishmentRate",
-    "replenishmentrate": "ReplenishmentRate",
-    "selection": "SelectionRate_Cases",
-    "selectionrate": "SelectionRate_Cases",
+    "picking": "PickRate",
+
     "overtime": "Overtime_pct",
-    "idle": "IdleSelectionTime_pct",
+
+    "idle selection time": "IdleSelectionTime_pct",
     "idle time": "IdleSelectionTime_pct",
+    "idle": "IdleSelectionTime_pct",
+
+    "on task time": "OnTaskTime_pct",
     "on task": "OnTaskTime_pct",
     "ontask": "OnTaskTime_pct",
+
+    "inventory accuracy": "InventoryAccuracy_pct",
     "accuracy": "InventoryAccuracy_pct",
+
+    "picking error": "PickingErrorRate_pct",
     "error": "PickingErrorRate_pct",
+
+    "on time shipment": "OnTimeShipment_pct",
     "shipment": "OnTimeShipment_pct",
+
     "absenteeism": "Absenteeism_pct",
-    "safety": "SafetyIncidents",
     "downtime": "EquipmentDowntime_Min",
-    "capacity": "CapacityUtilization_pct"
+    "equipment downtime": "EquipmentDowntime_Min",
+    "capacity": "CapacityUtilization_pct",
+    "capacity utilization": "CapacityUtilization_pct"
 }
 
 
 GROUP_ALIASES = {
-    "employee": "Employee_ID",
-    "employees": "Employee_ID",
-    "manager": "DC_Manager",
-    "managers": "DC_Manager",
     "team leader": "Team_Leader",
     "team leaders": "Team_Leader",
-    "team": "Team",
+    "employees": "Employee_ID",
+    "employee": "Employee_ID",
+    "managers": "DC_Manager",
+    "manager": "DC_Manager",
     "teams": "Team",
-    "shift": "Shift",
+    "team": "Team",
     "shifts": "Shift",
-    "warehouse": "DC_ID",
+    "shift": "Shift",
     "warehouses": "DC_ID",
+    "warehouse": "DC_ID",
     "dc": "DC_ID",
     "country": "Country",
     "region": "Region"
@@ -43,10 +64,15 @@ GROUP_ALIASES = {
 
 
 def extract_n(question, default_n=5):
-    match = re.search(r"\b(top|bottom|lowest|highest)\s+(\d+)", question.lower())
+    question_lower = question.lower()
 
+    match = re.search(r"\b(top|bottom|lowest|highest)\s+(\d+)", question_lower)
     if match:
         return int(match.group(2))
+
+    match = re.search(r"\b(\d+)\s+(lowest|highest|top|bottom)", question_lower)
+    if match:
+        return int(match.group(1))
 
     return default_n
 
@@ -57,22 +83,29 @@ def parse_question(question, default_kpi, default_group_by, default_n):
     selected_kpi = default_kpi
     selected_group_by = default_group_by
 
-    for keyword, kpi in KPI_ALIASES.items():
+    for keyword, detected_kpi in KPI_ALIASES.items():
         if keyword in question_lower:
-            selected_kpi = kpi
+            selected_kpi = detected_kpi
             break
 
-    for keyword, group_by in GROUP_ALIASES.items():
+    for keyword, detected_group in GROUP_ALIASES.items():
         if keyword in question_lower:
-            selected_group_by = group_by
+            selected_group_by = detected_group
             break
 
-    if "trend" in question_lower or "over time" in question_lower:
+    trend_keywords = [
+        "trend",
+        "weekly",
+        "week",
+        "weeks",
+        "over time",
+        "time series",
+        "movement",
+        "change over time"
+    ]
+
+    if any(keyword in question_lower for keyword in trend_keywords):
         intent = "trend"
-    elif "bottom" in question_lower or "lowest" in question_lower:
-        intent = "ranking"
-    elif "top" in question_lower or "highest" in question_lower:
-        intent = "ranking"
     elif "anomal" in question_lower:
         intent = "anomaly"
     elif "recommend" in question_lower or "action" in question_lower:
@@ -80,17 +113,23 @@ def parse_question(question, default_kpi, default_group_by, default_n):
     else:
         intent = "ranking"
 
-    ranking_type = "bottom" if "bottom" in question_lower or "lowest" in question_lower else "top"
+    if (
+        "bottom" in question_lower
+        or "lowest" in question_lower
+        or "worst" in question_lower
+        or "underperform" in question_lower
+    ):
+        ranking_type = "bottom"
+    else:
+        ranking_type = "top"
 
-    n = extract_n(
-        question=question,
-        default_n=default_n
-    )
+    n = extract_n(question, default_n)
 
     return {
         "intent": intent,
         "kpi": selected_kpi,
         "group_by": selected_group_by,
         "ranking_type": ranking_type,
-        "n": n
+        "n": n,
+        "needs_recommendation": True
     }

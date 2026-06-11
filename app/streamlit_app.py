@@ -1,12 +1,9 @@
-# Import Streamlit for UI
 import streamlit as st
-
-# Import sys and os for project path handling
 import sys
 import os
-
-# Import dotenv for environment variables
 from dotenv import load_dotenv
+import plotly.express as px
+
 
 # -----------------------------
 # Project path setup
@@ -22,10 +19,10 @@ sys.path.insert(0, src_path)
 
 
 # -----------------------------
-# Import final project engines
+# Import project engines
 # -----------------------------
-from question_parser import parse_question
 
+from question_parser import parse_question
 from data_loader import load_kpi_data
 
 from kpi_engine import (
@@ -42,18 +39,14 @@ from anomaly_engine import (
 )
 
 from recommendation_engine import get_priority_recommendations
-
 from summary_engine import generate_executive_summary
+from rag_engine import retrieve_context
 
 from visualization_engine import (
     create_top_performer_chart,
     create_bottom_performer_chart,
-    create_benchmark_chart,
-    create_trend_chart,
-    create_anomaly_chart
+    create_benchmark_chart
 )
-
-from langgraph_workflow import build_workflow
 
 
 # -----------------------------
@@ -85,7 +78,7 @@ with col1:
 with col2:
     st.markdown(
         "<div style='text-align: right; padding-top: 25px;'>"
-        "<i>Designed and developed by Rishabh</i>"
+        "<i>Designed for demo purposes</i>"
         "</div>",
         unsafe_allow_html=True
     )
@@ -97,70 +90,58 @@ with col2:
 
 st.markdown(
     """
-    This app is a GenAI-powered analytics assistant for warehouse operations.
-
-    It helps users ask natural language questions about warehouse KPI performance, anomalies,
-    trends, managers, teams, shifts, and employees.
-
-    The app combines:
-
-    - KPI analytics engine
-    - Benchmark engine
-    - Anomaly detection engine
-    - Recommendation engine
-    - RAG knowledge retrieval
-    - LangGraph workflow orchestration
-    - Interactive KPI visualizations
+    This GenAI-powered warehouse operations copilot helps leaders investigate KPI performance,
+    identify anomalies, benchmark operations, retrieve SOP guidance, and generate recommended
+    actions using natural language.
     """
 )
 
-
 st.info(
-    "Business problem: Warehouse leaders often need to quickly understand KPI performance, "
-    "identify operational issues, and explain anomalies across distribution centers, managers, "
-    "teams, shifts, and employees. This copilot converts warehouse KPI data into "
+    "Business problem: Warehouse leaders often need fast answers across distribution centers, "
+    "managers, teams, shifts, and employees. This copilot converts warehouse KPI data into "
     "business-ready operational insights."
 )
 
 
-st.markdown(
-    """
-    ### Example Questions You Can Ask
+# -----------------------------
+# Demo explanation
+# -----------------------------
 
-    - Which top 2 DC_Manager has the highest PickRate?
-    - Tell 2 lowest PickRate warehouses
-    - Show PickRate trend over time by Team
-    - Which team leader has the most anomalies?
-    - Show top 5 employees by PickRate
-    - Show overtime trend across shifts
-    """
-)
+with st.expander("Understanding the Demo Questions, KPIs, and Data"):
 
-
-with st.expander("Understanding The Demo Questions & KPIs"):
     st.markdown(
         """
         ### Warehouse Structure
 
-        - **Distribution Center (DC)** → Warehouse or fulfillment center location
+        - **DC_ID** → Warehouse / distribution center
         - **DC_Manager** → Manager responsible for warehouse operations
-        - **Team Leader** → Supervises warehouse operational teams
-        - **Shift** → Work shift
-        - **Employee_ID** → Individual warehouse employee identifier
+        - **Team_Leader** → Supervises warehouse teams
+        - **Team** → Operational team group
+        - **Shift** → Morning / Evening / Night shift
+        - **Employee_ID** → Individual warehouse employee
 
         ### KPI Definitions
 
-        - **PickRate** → Measures picking productivity and operational speed
-        - **SelectionRate_Cases** → Number of warehouse cases selected
-        - **ReplenishmentRate** → Inventory replenishment productivity
-        - **Overtime_pct** → Percentage of overtime worked
-        - **IdleSelectionTime_pct** → Percentage of non-productive idle time
-        - **OnTaskTime_pct** → Percentage of productive operational time
+        - **PickRate** → Picking productivity and speed
+        - **SelectionRate_Cases** → Number of selected warehouse cases
+        - **ReplenishmentRate** → Replenishment productivity
+        - **Overtime_pct** → Overtime percentage
+        - **IdleSelectionTime_pct** → Non-productive idle time
+        - **OnTaskTime_pct** → Productive working time
+        - **InventoryAccuracy_pct** → Inventory accuracy
+        - **PickingErrorRate_pct** → Picking errors
+        - **OnTimeShipment_pct** → On-time shipment performance
+        - **Absenteeism_pct** → Absenteeism rate
+        - **SafetyIncidents** → Safety issue count
+        - **EquipmentDowntime_Min** → Equipment downtime minutes
+        - **CapacityUtilization_pct** → Warehouse capacity utilization
 
-        ### What Is Anomaly Detection?
+        ### Example Questions
 
-        The system flags warning and critical KPI risks by comparing actual KPI performance
-        against benchmark thresholds.
+        - Show top 5 employees by ReplenishmentRate
+        - Show overtime trend across shifts
+        - Tell 3 lowest performing warehouses by PickRate
+        - Which team leader has the most anomalies?
         """
     )
 
@@ -171,190 +152,111 @@ with st.expander("Understanding The Demo Questions & KPIs"):
 
 @st.cache_data
 def load_data():
-    # Load final warehouse KPI CSV data
     return load_kpi_data()
 
 
-df = load_data()
+with st.spinner("Loading WarehouseGPT demo data..."):
+    df = load_data()
+
+
+# Detect available week column once
+if "Week_Number" in df.columns:
+    week_column = "Week_Number"
+elif "Week" in df.columns:
+    week_column = "Week"
+else:
+    week_column = None
 
 
 # -----------------------------
 # Sidebar filters
 # -----------------------------
 
-st.sidebar.header("Analysis Controls")
+st.subheader("Analysis Controls")
 
-group_by = st.sidebar.selectbox(
-    "Select analysis level",
-    [
-        "DC_ID",
-        "DC_Manager",
-        "Team_Leader",
-        "Team",
-        "Shift",
-        "Employee_ID",
-        "Country",
-        "Region"
-    ]
-)
+control_col1, control_col2, control_col3 = st.columns(3)
 
-kpi = st.sidebar.selectbox(
-    "Select KPI",
-    [
-        "PickRate",
-        "SelectionRate_Cases",
-        "ReplenishmentRate",
-        "IdleSelectionTime_pct",
-        "OnTaskTime_pct",
-        "Overtime_pct",
-        "InventoryAccuracy_pct",
-        "PickingErrorRate_pct",
-        "OnTimeShipment_pct",
-        "Absenteeism_pct",
-        "SafetyIncidents",
-        "EquipmentDowntime_Min",
-        "CapacityUtilization_pct"
-    ]
-)
+with control_col1:
+    group_by = st.selectbox(
+        "Select analysis level",
+        ["DC_ID", "DC_Manager", "Team_Leader", "Team", "Shift", "Employee_ID", "Country", "Region"]
+    )
 
-n = st.sidebar.slider(
-    "Top/Bottom N",
-    min_value=2,
-    max_value=20,
-    value=5
-)
+with control_col2:
+    kpi = st.selectbox(
+        "Select KPI",
+        [
+            "PickRate", "SelectionRate_Cases", "ReplenishmentRate",
+            "IdleSelectionTime_pct", "OnTaskTime_pct", "Overtime_pct",
+            "InventoryAccuracy_pct", "PickingErrorRate_pct",
+            "OnTimeShipment_pct", "Absenteeism_pct", "SafetyIncidents",
+            "EquipmentDowntime_Min", "CapacityUtilization_pct"
+        ]
+    )
+
+with control_col3:
+    n = st.slider(
+        "Top/Bottom N",
+        min_value=2,
+        max_value=20,
+        value=5
+    )
 
 
 # -----------------------------
-# Dashboard metrics
+# Executive dashboard
 # -----------------------------
 
-st.subheader("Operational Dashboard")
+# -----------------------------
+# Executive dashboard
+# -----------------------------
+
+st.subheader("Executive Dashboard")
+
+st.caption(
+    "Use the sidebar to change the KPI shown in the dashboard and visual overview."
+)
 
 m1, m2, m3, m4 = st.columns(4)
 
 m1.metric("KPI Records", len(df))
 m2.metric("Warehouses", df["DC_ID"].nunique())
 m3.metric("Employees", df["Employee_ID"].nunique())
-m4.metric(f"Average {kpi}", round(df[kpi].mean(), 2))
-
-
-# -----------------------------
-# Executive summary
-# -----------------------------
-
-st.subheader("Executive Summary")
-
-summary_text = generate_executive_summary(
-    group_by=group_by,
-    kpis=ANOMALY_KPIS
+m4.metric(
+    f"Average {kpi}",
+    round(df[kpi].mean(), 2)
 )
 
-st.text(summary_text)
-
 
 # -----------------------------
-# KPI summary
+# KPI Visual Overview
 # -----------------------------
 
-st.subheader("KPI Summary")
+st.subheader("KPI Visual Overview")
 
-summary_df = get_kpi_summary(
+top_df = get_top_performers(
+    kpi=kpi,
     group_by=group_by,
-    kpis=[kpi]
+    n=n
 )
 
-st.dataframe(summary_df, use_container_width=True)
-
-
-# -----------------------------
-# Benchmark status
-# -----------------------------
-
-st.subheader("Benchmark Status")
-
-benchmark_df = benchmark_kpi_summary(
+bottom_df = get_bottom_performers(
+    kpi=kpi,
     group_by=group_by,
-    kpi=kpi
+    n=n
 )
 
-st.dataframe(benchmark_df, use_container_width=True)
-
-
-# -----------------------------
-# Top and bottom performers
-# -----------------------------
-
-col_top, col_bottom = st.columns(2)
-
-with col_top:
-    st.subheader(f"Top {n} by {kpi}")
-
-    top_df = get_top_performers(
-        kpi=kpi,
-        group_by=group_by,
-        n=n
-    )
-
-    st.dataframe(top_df, use_container_width=True)
-
-with col_bottom:
-    st.subheader(f"Bottom {n} by {kpi}")
-
-    bottom_df = get_bottom_performers(
-        kpi=kpi,
-        group_by=group_by,
-        n=n
-    )
-
-    st.dataframe(bottom_df, use_container_width=True)
-
-
-# -----------------------------
-# Anomaly counts
-# -----------------------------
-
-st.subheader("Anomaly Counts")
-
-anomaly_counts = get_anomaly_counts(
-    group_by=group_by,
-    kpis=ANOMALY_KPIS
-)
-
-st.dataframe(anomaly_counts, use_container_width=True)
-
-
-# -----------------------------
-# Priority recommendations
-# -----------------------------
-
-st.subheader("Priority Recommendations")
-
-recommendations = get_priority_recommendations(
-    group_by=group_by,
-    kpis=ANOMALY_KPIS
-)
-
-st.dataframe(recommendations, use_container_width=True)
-
-
-# -----------------------------
-# KPI visualizations
-# -----------------------------
-
-st.subheader("KPI Visualizations")
-
-viz_tab1, viz_tab2, viz_tab3, viz_tab4 = st.tabs(
+viz_tab1, viz_tab2, viz_tab3 = st.tabs(
     [
         "Top / Bottom Performance",
-        "Benchmark Distribution",
-        "Trend Analysis",
-        "Anomaly Overview"
+        "Weekly Trend",
+        "Benchmark Snapshot"
     ]
 )
 
 
 with viz_tab1:
+
     chart_col1, chart_col2 = st.columns(2)
 
     with chart_col1:
@@ -365,7 +267,11 @@ with viz_tab1:
             n=n
         )
 
-        st.plotly_chart(fig_top, use_container_width=True)
+        st.plotly_chart(
+            fig_top,
+            use_container_width=True,
+            key="dashboard_top_chart"
+        )
 
     with chart_col2:
         fig_bottom = create_bottom_performer_chart(
@@ -375,102 +281,132 @@ with viz_tab1:
             n=n
         )
 
-        st.plotly_chart(fig_bottom, use_container_width=True)
+        st.plotly_chart(
+            fig_bottom,
+            use_container_width=True,
+            key="dashboard_bottom_chart"
+        )
 
 
 with viz_tab2:
-    if "Benchmark_Status" in benchmark_df.columns:
+
+    if week_column is not None:
+
+        dashboard_trend_df = (
+            df
+            .groupby(week_column)[kpi]
+            .mean()
+            .reset_index()
+            .sort_values(week_column)
+        )
+
+        fig_dashboard_trend = px.line(
+            dashboard_trend_df,
+            x=week_column,
+            y=kpi,
+            markers=True,
+            title=f"{kpi} Weekly Trend"
+        )
+
+        st.plotly_chart(
+            fig_dashboard_trend,
+            use_container_width=True,
+            key="dashboard_weekly_trend_chart"
+        )
+
+    else:
+        st.warning("Week column is not available in the dataset.")
+
+
+with viz_tab3:
+
+    benchmark_df_light = benchmark_kpi_summary(
+        group_by=group_by,
+        kpi=kpi
+    )
+
+    if "Benchmark_Status" in benchmark_df_light.columns:
+
         fig_benchmark = create_benchmark_chart(
-            benchmark_df=benchmark_df,
+            benchmark_df=benchmark_df_light,
             kpi=kpi
         )
 
-        st.plotly_chart(fig_benchmark, use_container_width=True)
+        st.plotly_chart(
+            fig_benchmark,
+            use_container_width=True,
+            key="dashboard_benchmark_chart"
+        )
+
     else:
         st.warning("Benchmark_Status column not found.")
 
 
-with viz_tab3:
-    if "Week_Number" in df.columns:
-        fig_trend = create_trend_chart(
-            df=df,
-            kpi=kpi
-        )
-
-        st.plotly_chart(fig_trend, use_container_width=True)
-    else:
-        st.warning("Week_Number column not available.")
-
-
-with viz_tab4:
-    if anomaly_counts is not None and not anomaly_counts.empty:
-        fig_anomaly = create_anomaly_chart(
-            anomaly_counts=anomaly_counts,
-            group_by=group_by
-        )
-
-        st.plotly_chart(fig_anomaly, use_container_width=True)
-    else:
-        st.success("No anomalies detected.")
-
-
 # -----------------------------
-# Quick demo questions
+# Copilot section
 # -----------------------------
 
-st.subheader("Quick Demo Questions")
+st.subheader("Ask the Copilot")
+
+st.markdown(
+    """
+    Ask questions about warehouse performance, productivity, anomalies,
+    trends, managers, teams, shifts, and employees.
+
+    **You can type your own question or click one of the example questions below.**
+    """
+)
+
+st.info(
+    """
+    Examples:
+
+    • Show top 5 employees by ReplenishmentRate
+
+    • Show overtime trend across shifts
+
+    • Tell 3 lowest performing warehouses by PickRate
+
+    • Which team leader has the most anomalies?
+    """
+)
+
 
 if "selected_question" not in st.session_state:
     st.session_state.selected_question = ""
 
-col1, col2 = st.columns(2)
+
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button("Top Managers by PickRate"):
-        st.session_state.selected_question = "Which top 2 DC_Manager has the highest PickRate?"
-
-    if st.button("Overtime Trend by Shift"):
-        st.session_state.selected_question = "Show overtime trend across shifts"
-
-    if st.button("Lowest Performing Warehouses"):
-        st.session_state.selected_question = "Tell 2 lowest PickRate warehouses"
+    if st.button("Top 5 Employees by ReplenishmentRate"):
+        st.session_state.selected_question = (
+            "Show top 5 employees by ReplenishmentRate"
+        )
 
 with col2:
-    if st.button("Team PickRate Trend"):
-        st.session_state.selected_question = "Show PickRate trend over time by Team"
+    if st.button("Overtime Trend Across Shifts"):
+        st.session_state.selected_question = (
+            "Show overtime trend across shifts"
+        )
 
-    if st.button("Top Employees"):
-        st.session_state.selected_question = "Show top 5 employees by PickRate"
+with col3:
+    if st.button("Lowest Warehouses by PickRate"):
+        st.session_state.selected_question = (
+            "Tell 3 lowest performing warehouses by PickRate"
+        )
 
-    if st.button("Most Anomalies"):
-        st.session_state.selected_question = "Which team leader has the most anomalies?"
-
-
-# -----------------------------
-# Chat history
-# -----------------------------
-
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-if st.session_state.chat_history:
-    st.subheader("Conversation History")
-
-    for chat in st.session_state.chat_history:
-        st.markdown(f"**You:** {chat['question']}")
-        st.markdown(f"**Copilot:** {chat['answer']}")
-        st.markdown("---")
-
-
-# -----------------------------
-# Question input
-# -----------------------------
 
 question = st.text_input(
     "Ask your warehouse KPI question:",
     value=st.session_state.selected_question,
-    placeholder="Example: Show top 5 employees by PickRate"
+    placeholder="Example: Show overtime trend across shifts"
 )
+
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
 
 # -----------------------------
 # Run copilot
@@ -483,7 +419,7 @@ if st.button("Ask Copilot"):
 
     else:
 
-        with st.spinner("Analyzing warehouse KPIs..."):
+        with st.spinner("Analyzing warehouse KPIs and retrieving operational guidance..."):
 
             parsed_question = parse_question(
                 question=question,
@@ -498,39 +434,72 @@ if st.button("Ask Copilot"):
             intent = parsed_question["intent"]
             ranking_type = parsed_question["ranking_type"]
 
-            if intent == "trend" and "Week_Number" in df.columns:
+            question_lower = question.lower()
 
-                trend_df = (
-                    df
-                    .groupby(["Week_Number", selected_group_by])[selected_kpi]
-                    .mean()
-                    .reset_index()
-                    .sort_values("Week_Number")
-                )
+            if (
+                "trend" in question_lower
+                or "weekly" in question_lower
+                or "week" in question_lower
+                or "over time" in question_lower
+                or "time series" in question_lower
+            ):
+                intent = "trend"
 
-                st.subheader("AI Answer")
-                st.write(
-                    f"Trend analysis completed for **{selected_kpi}** across **{selected_group_by}**. "
-                    f"The chart below shows weekly KPI movement."
-                )
+            rag_context = retrieve_context(
+                question=question,
+                k=3
+            )
 
-                fig = create_trend_chart(
-                    df=df,
-                    kpi=selected_kpi
-                )
+            if intent == "trend":
 
-                st.subheader("Analysis Chart")
-                st.plotly_chart(fig, use_container_width=True)
+                if week_column is None:
+                    answer_text = (
+                        "I understood this as a trend question, but the dataset does not contain "
+                        "a Week or Week_Number column."
+                    )
 
-                st.subheader("Analysis Data")
-                st.dataframe(trend_df, use_container_width=True)
+                    st.subheader("AI Answer")
+                    st.write(answer_text)
 
-                answer_text = f"Trend analysis completed for {selected_kpi} across {selected_group_by}."
+                else:
+                    trend_df = (
+                        df
+                        .groupby([week_column, selected_group_by])[selected_kpi]
+                        .mean()
+                        .reset_index()
+                        .sort_values(week_column)
+                    )
+
+                    fig = px.line(
+                        trend_df,
+                        x=week_column,
+                        y=selected_kpi,
+                        color=selected_group_by,
+                        markers=True,
+                        title=f"{selected_kpi} Weekly Trend by {selected_group_by}"
+                    )
+
+                    answer_text = (
+                        f"Weekly trend analysis completed for **{selected_kpi}** across "
+                        f"**{selected_group_by}**. The chart below shows how the KPI moved over time."
+                    )
+
+                    st.subheader("AI Answer")
+                    st.write(answer_text)
+
+                    st.subheader("Analysis Chart")
+                    st.plotly_chart(
+                        fig,
+                        use_container_width=True,
+                        key=f"copilot_trend_{selected_kpi}_{selected_group_by}_{selected_n}"
+                    )
+
+                    st.subheader("Analysis Data")
+                    st.dataframe(trend_df, use_container_width=True)
 
             elif intent == "ranking":
 
                 if ranking_type == "bottom":
-
                     result_df = get_bottom_performers(
                         kpi=selected_kpi,
                         group_by=selected_group_by,
@@ -550,7 +519,6 @@ if st.button("Ask Copilot"):
                     )
 
                 else:
-
                     result_df = get_top_performers(
                         kpi=selected_kpi,
                         group_by=selected_group_by,
@@ -573,23 +541,113 @@ if st.button("Ask Copilot"):
                 st.write(answer_text)
 
                 st.subheader("Analysis Chart")
-                st.plotly_chart(fig, use_container_width=True)
-
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    key=f"copilot_ranking_{selected_kpi}_{selected_group_by}_{ranking_type}_{selected_n}"
+                )
                 st.subheader("Analysis Data")
                 st.dataframe(result_df, use_container_width=True)
 
-            else:
+
+            elif intent == "anomaly":
+
+                anomaly_counts = get_anomaly_counts(
+                    group_by=selected_group_by,
+                    kpis=ANOMALY_KPIS
+                )
+
+                anomaly_col = anomaly_counts.columns[-1]
+
+                fig = px.bar(
+                    anomaly_counts.head(selected_n),
+                    x=selected_group_by,
+                    y=anomaly_col,
+                    text=anomaly_col,
+                    title=f"Top {selected_n} Anomaly Counts by {selected_group_by}"
+                )
 
                 answer_text = (
-                    "I understood the question, but this specific analysis type is not fully connected yet."
+                    f"Anomaly analysis completed for **{selected_group_by}**. "
+                    f"The chart below shows the groups with the highest anomaly counts."
                 )
 
                 st.subheader("AI Answer")
                 st.write(answer_text)
 
+                st.subheader("Analysis Chart")
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True,
+                    key=f"copilot_anomaly_{selected_group_by}_{selected_n}"
+                )
+
+                with st.expander("View Anomaly Data"):
+                    st.dataframe(anomaly_counts, use_container_width=True)
+
+
+            elif intent == "recommendation":
+
+                recommendations = get_priority_recommendations(
+                    group_by=selected_group_by,
+                    kpis=ANOMALY_KPIS
+                )
+
+                answer_text = (
+                    f"Recommendation analysis completed for **{selected_group_by}**. "
+                    f"The table below shows prioritized management actions."
+                )
+
+                st.subheader("AI Answer")
+                st.write(answer_text)
+
+                st.subheader("Recommended Management Actions")
+                st.dataframe(recommendations, use_container_width=True)
+
+
+            else:
+
+                answer_text = (
+                    "I understood the question, but this analysis type is not fully connected yet."
+                )
+
+                st.subheader("AI Answer")
+                st.write(answer_text)
+
+
+            st.subheader("Knowledge Base Recommendation")
+            st.write(rag_context)
+
+            recommendations = get_priority_recommendations(
+                group_by=selected_group_by,
+                kpis=[selected_kpi]
+            )
+
+            st.dataframe(
+                recommendations,
+                use_container_width=True
+            )
+            st.success(
+            f"Analysis completed successfully for {selected_kpi}"
+            )
             st.session_state.chat_history.append(
                 {
                     "question": question,
                     "answer": answer_text
                 }
             )
+
+
+# -----------------------------
+# Conversation history
+# -----------------------------
+
+if st.session_state.chat_history:
+
+    with st.expander("Conversation History"):
+
+        for chat in st.session_state.chat_history:
+            st.markdown(f"**You:** {chat['question']}")
+            st.markdown(f"**Copilot:** {chat['answer']}")
+            st.markdown("---")
+

@@ -472,7 +472,6 @@ question = st.text_input(
     placeholder="Example: Show top 5 employees by PickRate"
 )
 
-
 # -----------------------------
 # Run copilot
 # -----------------------------
@@ -483,16 +482,31 @@ if st.button("Ask Copilot"):
         st.warning("Please enter a question.")
 
     else:
+
         with st.spinner("Analyzing warehouse KPIs..."):
 
             workflow_app = build_workflow()
 
+            question_lower = question.lower()
+
+            if "trend" in question_lower:
+                intent = "comparison"
+                ranking_type = "top"
+
+            elif "bottom" in question_lower or "lowest" in question_lower:
+                intent = "ranking"
+                ranking_type = "bottom"
+
+            else:
+                intent = "ranking"
+                ranking_type = "top"
+
             workflow_state = {
                 "user_question": question,
-                "intent": "ranking",
+                "intent": intent,
                 "kpi": kpi,
                 "group_by": group_by,
-                "ranking_type": "top",
+                "ranking_type": ranking_type,
                 "n": n,
                 "needs_rag": False
             }
@@ -508,7 +522,7 @@ if st.button("Ask Copilot"):
                 config=config
             )
 
-            answer = result.get("final_answer", {})
+            answer = result.get("final_answer", "")
 
             st.subheader("AI Answer")
             st.write(answer)

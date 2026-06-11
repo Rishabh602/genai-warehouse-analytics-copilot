@@ -229,30 +229,30 @@ def route_rag_if_needed(state: WorkflowState) -> str:
 
 
 # Generate final response payload
-def generate_final_answer_node(state: WorkflowState) -> WorkflowState:
-    # Build final answer from workflow outputs
-    final_answer = {
-        "user_question": state.get("user_question"),
-        "intent": state.get("intent"),
-        "tool_result": state.get("tool_result"),
-        "benchmark_result": state.get("benchmark_result"),
-        "recommendation_result": state.get("recommendation_result"),
-        "summary_result": state.get("summary_result"),
-        "rag_context": state.get("rag_context")
-    }
+def generate_final_answer_node(state):
 
-    # Store final answer in state
+    if state.get("intent") == "ranking":
+
+        final_answer = (
+            f"Ranking analysis completed for {state.get('kpi')} "
+            f"at {state.get('group_by')} level."
+        )
+
+    elif state.get("intent") == "comparison":
+
+        final_answer = (
+            f"Trend/comparison analysis completed for "
+            f"{state.get('kpi')}."
+        )
+
+    else:
+
+        final_answer = (
+            "Analysis completed successfully."
+        )
+
     state["final_answer"] = final_answer
 
-    # Add current interaction to memory-friendly chat history
-    state["chat_history"].append(
-        {
-            "user": state.get("user_question", ""),
-            "assistant": str(final_answer)
-        }
-    )
-
-    # Return final state
     return state
 
 
